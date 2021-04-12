@@ -1,31 +1,31 @@
 (ns foreclojure.utils
-  (:require [noir.session             :as   session]
-            [ring.util.response       :as   response]
-            [foreclojure.config       :as   config]
-            [foreclojure.messages     :as   msg]
-            [clojure.walk             :as   walk]
-            [clojure.string           :as   string]
-            [foreclojure.git          :as   git]
-            [hiccup.page              :as   hiccup])
-  (:import  [java.net                 URLEncoder]
-            (org.apache.commons.lang  StringEscapeUtils)
-            (org.apache.commons.mail  HtmlEmail))
-  (:use     [hiccup.core              :only [html]]
-            [hiccup.page              :only [doctype]]
-            [hiccup.element           :only [link-to]]
-            [hiccup.form              :only [label]]
-            [useful.fn                :only [to-fix]]
-            [somnium.congomongo       :only [fetch-one]]
-            [foreclojure.ring-utils   :only [*url* static-url]]
-            [foreclojure.config       :only [config repo-url]]))
+  (:require [noir.session :as session]
+            [ring.util.response :as response]
+            [foreclojure.config :as config]
+            [foreclojure.messages :as msg]
+            [clojure.walk :as walk]
+            [clojure.string :as string]
+            [foreclojure.git :as git]
+            [hiccup.page :as hiccup])
+  (:import [java.net URLEncoder]
+           (org.apache.commons.lang StringEscapeUtils)
+           (org.apache.commons.mail HtmlEmail))
+  (:use [hiccup.core :only [html]]
+        [hiccup.page :only [doctype]]
+        [hiccup.element :only [link-to]]
+        [hiccup.form :only [label]]
+        [useful.fn :only [to-fix]]
+        [somnium.congomongo :only [fetch-one]]
+        [foreclojure.ring-utils :only [*url* static-url]]
+        [foreclojure.config :only [config repo-url]]))
 
 (defn make-user-url [user]
   {:href (str "/user/" user)})
 
 (defn as-int [s]
   (if (integer? s) s,
-      (try (Integer. s)
-           (catch Exception _ nil))))
+                   (try (Integer. s)
+                        (catch Exception _ nil))))
 
 (defn escape-html [s]
   (when s (StringEscapeUtils/escapeHtml s)))
@@ -41,9 +41,9 @@
   [[& clauses] body & [fail-expr]]
   `(if-let [[~'why]
             (cond
-             ~@(mapcat (fn [[test fail-value]]
-                         [`(not ~test) [fail-value]])
-                       (partition 2 clauses)))]
+              ~@(mapcat (fn [[test fail-value]]
+                          [`(not ~test) [fail-value]])
+                        (partition 2 clauses)))]
      ~fail-expr
      ~body))
 
@@ -66,8 +66,8 @@
   ;; Allow to return nothing at all so Compojure keeps looking
   (page-attributes [this] nil))
 
-(let [defaults {:content nil
-                :title "4clojure"
+(let [defaults {:content     nil
+                :title       "4clojure"
                 :fork-banner false}]
   (defn rendering-info [attributes]
     (into defaults attributes)))
@@ -76,29 +76,29 @@
   "Acts like clojure.core/update-in, except that if the value being assoc'd in
   is nil, then instead the key is dissoc'd entirely."
   ([m ks f]
-     (let [[k & ks] ks
-           inner (get m k)
-           v (if ks
-               (maybe-update inner ks f)
-               (f inner))]
-       (if v
-         (assoc m k v)
-         (dissoc m k))))
+   (let [[k & ks] ks
+         inner (get m k)
+         v (if ks
+             (maybe-update inner ks f)
+             (f inner))]
+     (if v
+       (assoc m k v)
+       (dissoc m k))))
   ([m ks f & args]
-     (maybe-update m ks #(apply f % args))))
+   (maybe-update m ks #(apply f % args))))
 
 (defn login-url
   ([] (login-url *url*))
   ([location]
-     (str "/login?location=" (URLEncoder/encode location))))
+   (str "/login?location=" (URLEncoder/encode location))))
 
 (defn login-link
   ([] (login-link "Log in" *url*))
   ([text] (login-link text *url*))
   ([text location]
-     (html
-      (link-to (login-url location)
-               text))))
+   (html
+     (link-to (login-url location)
+              text))))
 
 (defn plausible-email? [address]
   (re-find #"^.+@\S+\.\S{2,4}$" address))
@@ -128,7 +128,7 @@
 
 (defn get-user [username]
   (from-mongo
-   (fetch-one :users :where {:user username})))
+    (fetch-one :users :where {:user username})))
 
 (defmacro if-user
   "Look for a user with the given username in the database, let-ing it
@@ -139,19 +139,19 @@
   specified. Callers need not verify that username is non-nil: that is
   done for you before consulting the database."
   ([[user-binding username] then]
-     `(if-user ~[user-binding username] ~then nil))
+   `(if-user ~[user-binding username] ~then nil))
   ([[user-binding username] then else]
-     (let [userexpr (or username `(session/get :user))]
-       `(let [username# ~userexpr]
-          (if-let [~user-binding (and username#
-                                      (get-user username#))]
-            ~then
-            ~else)))))
+   (let [userexpr (or username `(session/get :user))]
+     `(let [username# ~userexpr]
+        (if-let [~user-binding (and username#
+                                    (get-user username#))]
+          ~then
+          ~else)))))
 
 (defmacro with-user [[binding expr] & body]
   `(if-user [~binding ~expr]
-     (do ~@body)
-     [:span.error (msg/err-msg "security.login-required" (login-link))]))
+            (do ~@body)
+            [:span.error (msg/err-msg "security.login-required" (login-link))]))
 
 (defn flash-fn [type]
   (fn [url msg]
@@ -164,9 +164,9 @@
 (defn user-attribute [attr]
   (fn [username]
     (attr (from-mongo
-           (fetch-one :users
-                      :where {:user username}
-                      :only [attr])))))
+            (fetch-one :users
+                       :where {:user username}
+                       :only [attr])))))
 
 (def get-solved (comp set (user-attribute :solved)))
 (def approver? (user-attribute :approver))
@@ -215,5 +215,5 @@
 
 (defn get-theme []
   (if-user [{:keys [theme]}]
-    (or theme default-theme)
-    default-theme))
+           (or theme default-theme)
+           default-theme))

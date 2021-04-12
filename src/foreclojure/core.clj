@@ -1,42 +1,42 @@
 (ns foreclojure.core
-  (:require [compojure.route            :as   route]
-            [compojure.handler          :as   handler]
-            [foreclojure.config         :as   config]
-            [noir.session               :as   session])
-  (:import  [java.lang                  OutOfMemoryError])
-  (:use     [compojure.core             :only [defroutes routes GET]]
-            [foreclojure.static         :only [static-routes]]
-            [foreclojure.api            :only [api-routes]]
-            [foreclojure.datatable      :only [datatable-routes]]
-            [foreclojure.problems       :only [problems-routes]]
-            [foreclojure.login          :only [login-routes]]
-            [foreclojure.settings       :only [settings-routes]]
-            [foreclojure.register       :only [register-routes]]
-            [foreclojure.golf           :only [golf-routes]]
-            [foreclojure.ring           :only [resources wrap-strip-trailing-slash wrap-url-as-file wrap-versioned-expiry split-hosts wrap-404 wrap-debug]]
-            [foreclojure.users          :only [users-routes]]
-            [foreclojure.config         :only [config]]
-            [foreclojure.social         :only [social-routes]]
-            [foreclojure.version        :only [version-routes]]
-            [foreclojure.graphs         :only [graph-routes]]
-            [foreclojure.mongo          :only [prepare-mongo]]
-            [foreclojure.ring-utils     :only [wrap-request-bindings]]
-            [foreclojure.periodic       :only [schedule-task]]
-            [foreclojure.home           :only [home-routes]]
-            [ring.adapter.jetty         :only [run-jetty]]
-            [ring.middleware.reload     :only [wrap-reload]]
-            [ring.middleware.stacktrace :only [wrap-stacktrace]]
-            [ring.middleware.file-info  :only [wrap-file-info]]
-            [ring.middleware.gzip       :only [wrap-gzip]]
-            [mongo-session.core         :only [mongo-session]]))
+  (:require [compojure.route :as route]
+            [compojure.handler :as handler]
+            [foreclojure.config :as config]
+            [noir.session :as session])
+  (:import [java.lang OutOfMemoryError])
+  (:use [compojure.core :only [defroutes routes GET]]
+        [foreclojure.static :only [static-routes]]
+        [foreclojure.api :only [api-routes]]
+        [foreclojure.datatable :only [datatable-routes]]
+        [foreclojure.problems :only [problems-routes]]
+        [foreclojure.login :only [login-routes]]
+        [foreclojure.settings :only [settings-routes]]
+        [foreclojure.register :only [register-routes]]
+        [foreclojure.golf :only [golf-routes]]
+        [foreclojure.ring :only [resources wrap-strip-trailing-slash wrap-url-as-file wrap-versioned-expiry split-hosts wrap-404 wrap-debug]]
+        [foreclojure.users :only [users-routes]]
+        [foreclojure.config :only [config]]
+        [foreclojure.social :only [social-routes]]
+        [foreclojure.version :only [version-routes]]
+        [foreclojure.graphs :only [graph-routes]]
+        [foreclojure.mongo :only [prepare-mongo]]
+        [foreclojure.ring-utils :only [wrap-request-bindings]]
+        [foreclojure.periodic :only [schedule-task]]
+        [foreclojure.home :only [home-routes]]
+        [ring.adapter.jetty :only [run-jetty]]
+        [ring.middleware.reload :only [wrap-reload]]
+        [ring.middleware.stacktrace :only [wrap-stacktrace]]
+        [ring.middleware.file-info :only [wrap-file-info]]
+        [ring.middleware.gzip :only [wrap-gzip]]
+        [mongo-session.core :only [mongo-session]]))
 
 (def ^:dynamic *block-server* false)
 
 (defroutes resource-routes
-  (-> (resources "/*")
-      (wrap-url-as-file)
-      (wrap-file-info)
-      (wrap-versioned-expiry)))
+           (-> (resources "/*")
+               (wrap-url-as-file)
+               (wrap-file-info)
+               (wrap-versioned-expiry)))
 
 (def dynamic-routes
   (-> (routes home-routes
@@ -67,11 +67,11 @@
                         "://"
                         config/canonical-host
                         uri)]
-    {:status 302
+    {:status  302
      :headers {"Location" proper-uri}
-     :body (str "<a href='" proper-uri "'>"
-                proper-uri
-                "</a>")}))
+     :body    (str "<a href='" proper-uri "'>"
+                   proper-uri
+                   "</a>")}))
 
 (def host-handlers (reduce into
                            {:default (routes dynamic-routes resource-routes)}

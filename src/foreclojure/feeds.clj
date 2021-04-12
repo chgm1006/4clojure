@@ -12,16 +12,16 @@
      (element :description \"Description of Item\"))"
   [feed-title feed-link feed-description resource-link items]
   (emit-str
-   (element :rss {:version "2.0"
-                  :xmlns:atom "http://www.w3.org/2005/Atom"}
-     (apply element :channel {}
-       (element :atom:link {:href resource-link
-                            :rel "self"
-                            :type "application/rss+xml"})
-       (element :title {} feed-title)
-       (element :link {} feed-link)
-       (element :description {} feed-description)
-       items))))
+    (element :rss {:version    "2.0"
+                   :xmlns:atom "http://www.w3.org/2005/Atom"}
+             (apply element :channel {}
+                    (element :atom:link {:href resource-link
+                                         :rel  "self"
+                                         :type "application/rss+xml"})
+                    (element :title {} feed-title)
+                    (element :link {} feed-link)
+                    (element :description {} feed-description)
+                    items))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -30,9 +30,9 @@
 ;; to verify your feed is valid.
 (comment
   (spit (java.io.File. "test.xml")
-        (create-feed  "Recent Problems"
-                      "http://4clojure.com"
-                      "Recent problems at 4clojure"
-                      "http://4clojure.com/problems/rss"
-                      (problem-feed 20))))
+        (create-feed "Recent Problems"
+                     "http://4clojure.com"
+                     "Recent problems at 4clojure"
+                     "http://4clojure.com/problems/rss"
+                     (problem-feed 20))))
 

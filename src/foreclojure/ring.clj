@@ -1,15 +1,15 @@
 (ns foreclojure.ring
-  (:require [clojure.java.io           :as   io]
-            [clojure.string            :as   s]
-            [compojure.route           :as   route]
-            [cheshire.core             :as   json])
-  (:import  [java.net                  URL])
-  (:use     [compojure.core            :only [GET routes]]
-            [hiccup.core               :only [html]]
-            [foreclojure.version-utils :only [strip-version-number]]
-            [foreclojure.ring-utils    :only [get-host static-url]]
-            [useful.debug              :only [?]]
-            [ring.util.response        :only [response]]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]
+            [compojure.route :as route]
+            [cheshire.core :as json])
+  (:import [java.net URL])
+  (:use [compojure.core :only [GET routes]]
+        [hiccup.core :only [html]]
+        [foreclojure.version-utils :only [strip-version-number]]
+        [foreclojure.ring-utils :only [get-host static-url]]
+        [useful.debug :only [?]]
+        [ring.util.response :only [response]]))
 
 ;; copied from compojure.route, modified to use File instead of Stream
 (defn resources
@@ -37,7 +37,7 @@
 (defn wrap-versioned-expiry [handler]
   (fn [request]
     (when-let [resp (handler
-                     (update-in request [:uri] strip-version-number))]
+                      (update-in request [:uri] strip-version-number))]
       (assoc-in resp [:headers "Cache-control"]
                 "public, max-age=31536000"))))
 
@@ -63,12 +63,12 @@
 
 (def render-404
   (html
-   [:head
-    [:title "4clojure: Page not found"]]
-   [:body
-    [:div {:style "margin-left: auto; margin-right: auto; width: 300px;"}
-     [:p {:style "text-align: center; width: 100%; margin-top: 45px; font-family: helvetica; color: gray; font-size: 25px;"} "404 &mdash; Page not found."]
-     [:img {:style "margin-left: 18px;" :src (static-url "images/4clj-gus-confused-small.png")}]]]))
+    [:head
+     [:title "4clojure: Page not found"]]
+    [:body
+     [:div {:style "margin-left: auto; margin-right: auto; width: 300px;"}
+      [:p {:style "text-align: center; width: 100%; margin-top: 45px; font-family: helvetica; color: gray; font-size: 25px;"} "404 &mdash; Page not found."]
+      [:img {:style "margin-left: 18px;" :src (static-url "images/4clj-gus-confused-small.png")}]]]))
 
 (defn wrap-404 [handler]
   (routes handler

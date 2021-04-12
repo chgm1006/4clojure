@@ -1,12 +1,12 @@
 (ns foreclojure.social
-  (:require [innuendo.core            :as   rheap]
-            [noir.session             :as   session])
-  (:import  [java.net                 URLEncoder])
-  (:use     [foreclojure.template     :only [def-page]]
-            [foreclojure.utils        :only [escape-html]]
-            [compojure.core           :only [defroutes GET]]
-            [hiccup.element           :only [link-to]]
-            [somnium.congomongo       :only [fetch-one]]))
+  (:require [innuendo.core :as rheap]
+            [noir.session :as session])
+  (:import [java.net URLEncoder])
+  (:use [foreclojure.template :only [def-page]]
+        [foreclojure.utils :only [escape-html]]
+        [compojure.core :only [defroutes GET]]
+        [hiccup.element :only [link-to]]
+        [somnium.congomongo :only [fetch-one]]))
 
 (defn throttled
   "Create a version of a function which 'refuses' to be called too
@@ -20,18 +20,18 @@
                               (fn [{:keys [last-sent]}]
                                 (let [now (System/currentTimeMillis)
                                       ok (< ms-period (- now last-sent))]
-                                  {:accepted ok
+                                  {:accepted  ok
                                    :last-sent (if ok now last-sent)}))))
         (apply f args)))))
 
 (def clojure-hashtag (throttled (constantly "#clojure ")
-                                (* 1000 60 60))) ; hourly
+                                (* 1000 60 60)))            ; hourly
 
 (defn tweet-link [id status & [anchor-text]]
   (str "<a href=\"http://twitter.com/share?"
        "text=" (URLEncoder/encode status)
        "&url=" (URLEncoder/encode
-                (str "https://4clojure.com/problem/" id))
+                 (str "https://4clojure.com/problem/" id))
        "&related=4clojure"
        "\">"
        (or anchor-text "Twitter")
@@ -39,9 +39,9 @@
 
 (defn get-problem-title [id]
   (:title
-   (fetch-one :problems
-              :only [:title]
-              :where {:_id id})))
+    (fetch-one :problems
+               :only [:title]
+               :where {:_id id})))
 
 (defn paste!
   "Create a new paste containing a user's solution to a problem and
@@ -69,25 +69,25 @@
     (tweet-link id status-msg link-text)))
 
 (def-page share-page []
-  {:title "Share your code!"
-   :content
-   (if-let [[id code] (session/get :code)]
-     (let [user (session/get :user)
-           paste-url (paste! user id code)
-           paste-link (if paste-url
-                        [:div {:id "shared-code-box"}
-                         [:div.code
-                          [:h3 "Your Solution"]
-                          [:pre (escape-html code)]]
-                         [:br]
-                         [:div.share
-                          "Share this " (link-to paste-url "solution")
-                          " on " (tweet-solution id paste-url) "?"]]
-                        [:div.error
-                         "Failed to create paste of your solution"])]
-       paste-link)
-     [:div.error
-      "Sorry...I don't remember you solving anything recently!"])})
+          {:title "Share your code!"
+           :content
+                  (if-let [[id code] (session/get :code)]
+                    (let [user (session/get :user)
+                          paste-url (paste! user id code)
+                          paste-link (if paste-url
+                                       [:div {:id "shared-code-box"}
+                                        [:div.code
+                                         [:h3 "Your Solution"]
+                                         [:pre (escape-html code)]]
+                                        [:br]
+                                        [:div.share
+                                         "Share this " (link-to paste-url "solution")
+                                         " on " (tweet-solution id paste-url) "?"]]
+                                       [:div.error
+                                        "Failed to create paste of your solution"])]
+                      paste-link)
+                    [:div.error
+                     "Sorry...I don't remember you solving anything recently!"])})
 
 (defroutes social-routes
-  (GET "/share/code" [] (share-page)))
+           (GET "/share/code" [] (share-page)))

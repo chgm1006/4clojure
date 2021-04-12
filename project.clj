@@ -23,4 +23,4 @@
   :checksum-deps true
   :main foreclojure.core
   :ring {:handler foreclojure.core/app
-         :init foreclojure.mongo/prepare-mongo})
+         :init    foreclojure.mongo/prepare-mongo})

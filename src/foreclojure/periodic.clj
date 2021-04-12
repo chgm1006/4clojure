@@ -6,13 +6,13 @@
 ;; Stolen from clojail, but I wrote it myself anyway.
 ;; I guess it deserves a library of its own? Or maybe in useful?
 (def uglify-time-unit
-  (into {} (for [[enum aliases] {TimeUnit/NANOSECONDS [:ns :nanoseconds]
+  (into {} (for [[enum aliases] {TimeUnit/NANOSECONDS  [:ns :nanoseconds]
                                  TimeUnit/MICROSECONDS [:us :microseconds]
                                  TimeUnit/MILLISECONDS [:ms :milliseconds]
-                                 TimeUnit/SECONDS [:s :sec :seconds]
-                                 TimeUnit/MINUTES [:m :min :minutes]
-                                 TimeUnit/HOURS [:h :hours]
-                                 TimeUnit/DAYS [:d :days]}
+                                 TimeUnit/SECONDS      [:s :sec :seconds]
+                                 TimeUnit/MINUTES      [:m :min :minutes]
+                                 TimeUnit/HOURS        [:h :hours]
+                                 TimeUnit/DAYS         [:d :days]}
                  alias aliases]
              {alias enum})))
 

@@ -1,9 +1,9 @@
 (ns foreclojure.ring-utils
   (:require [foreclojure.config :as config]))
 
-(def ^{:dynamic true} *url*         nil) ; url of current request
-(def ^{:dynamic true} *host*        nil) ; Host header sent by client
-(def ^{:dynamic true} *http-scheme* nil) ; keyword, :http or :https
+(def ^{:dynamic true} *url* nil)                            ; url of current request
+(def ^{:dynamic true} *host* nil)                           ; Host header sent by client
+(def ^{:dynamic true} *http-scheme* nil)                    ; keyword, :http or :https
 
 (defn get-host [request]
   (get-in request [:headers "host"]))
@@ -20,4 +20,4 @@
             #(str (name (or *http-scheme* :http)) "://" host "/" %)
             #(str "/" %)))]
   (def universal-url (url-fn (or config/static-host config/canonical-host)))
-  (def static-url    (url-fn config/static-host)))
+  (def static-url (url-fn config/static-host)))
